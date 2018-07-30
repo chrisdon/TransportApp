@@ -11,8 +11,7 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:onClick="@{viewModel::onTapped}">
+        android:padding="16dp">
 
         <TextView
             android:id="@+id/station_name"

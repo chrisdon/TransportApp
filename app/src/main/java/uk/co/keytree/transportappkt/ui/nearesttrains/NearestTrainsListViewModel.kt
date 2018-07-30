@@ -23,8 +23,9 @@ class NearestTrainsListViewModel: BaseViewModel() {
     private lateinit var subscription: Disposable
     val loadingVisibility: MutableLiveData<Int> = MutableLiveData()
     val errorMessage: MutableLiveData<Int> = MutableLiveData()
+    val tapped: MutableLiveData<Station> = MutableLiveData()
     val errorClickListener = View.OnClickListener { loadNearestStations() }
-    val stationListAdapter: TrainListAdapter = TrainListAdapter()
+    val stationListAdapter: TrainListAdapter = TrainListAdapter{station: Station -> onStationTapped(station)}
 
     override fun onCleared() {
         super.onCleared()
@@ -63,5 +64,9 @@ class NearestTrainsListViewModel: BaseViewModel() {
     private fun onRetrieveStationListError(error: Throwable){
         Log.e("NearestTrainsViewModel", error.localizedMessage, error);
         errorMessage.value = R.string.train_error
+    }
+
+    private fun onStationTapped(station: Station) {
+        tapped.value = station
     }
 }

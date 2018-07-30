@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
             errorMessage -> if(errorMessage != null) showError(errorMessage) else hideError()
         })
         binding.viewModel = viewModel
-        viewModel.stationListAdapter.tapped.observe(this, Observer {
+        viewModel.tapped.observe(this, Observer {
             station -> if(station != null) showTapped(station) else hideError()
         })
 
