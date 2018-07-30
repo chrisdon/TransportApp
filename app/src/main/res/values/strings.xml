@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">TransportAppKt</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+    <string name="retry">Retry</string>
+    <string name="train_error">An error occurred while loading the nearest stations</string>
+</resources>
