@@ -21,10 +21,13 @@ class NearestTrainsListViewModel: BaseViewModel() {
     lateinit var transportApi: TransportApi
 
     private lateinit var subscription: Disposable
+    private var latitude: Double = 0.0
+    private var longitude: Double = 0.0
+
     val loadingVisibility: MutableLiveData<Int> = MutableLiveData()
     val errorMessage: MutableLiveData<Int> = MutableLiveData()
     val tapped: MutableLiveData<Station> = MutableLiveData()
-    val errorClickListener = View.OnClickListener { loadNearestStations() }
+    val errorClickListener = View.OnClickListener { loadNearestStations(latitude, longitude) }
     val stationListAdapter: TrainListAdapter = TrainListAdapter{station: Station -> onStationTapped(station)}
 
     override fun onCleared() {
@@ -33,11 +36,13 @@ class NearestTrainsListViewModel: BaseViewModel() {
     }
 
     init {
-        loadNearestStations()
+        //loadNearestStations()
     }
 
-    private fun loadNearestStations() {
-        subscription = transportApi.getNearestStations(TA_APP_ID, TA_APP_KEY, TEST_LAT, TEST_LON)
+    fun loadNearestStations(latitiude: Double, longitude: Double) {
+        this.latitude = latitiude
+        this.longitude = longitude
+        subscription = transportApi.getNearestStations(TA_APP_ID, TA_APP_KEY, latitiude, longitude)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { onRetrieveStationListStart() }

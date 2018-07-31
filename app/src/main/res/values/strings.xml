@@ -5,4 +5,8 @@
     <string name="title_notifications">Notifications</string>
     <string name="retry">Retry</string>
     <string name="train_error">An error occurred while loading the nearest stations</string>
+    <string name="location_error">A location could not be found. Soz</string>
+    <string name="settings">Settings</string>
+    <string name="permission_denied_explanation">Please amend your settings to find the nearest stations to you</string>
+    <string name="permission_rationale">Location needs to be enabled to find the nearest stations to you</string>
 </resources>
