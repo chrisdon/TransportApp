@@ -82,11 +82,20 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+        binding.swipeContainer.setOnRefreshListener{
+            binding.swipeContainer.setRefreshing(false)
+            getLocation()
+        }
+
     }
 
     override fun onStart() {
         super.onStart()
 
+        getLocation()
+    }
+
+    private fun getLocation() {
         if (!checkPermissions()) {
             requestPermissions()
         } else {
