@@ -1,6 +1,6 @@
 package uk.co.keytree.transportappkt.ui.nearesttrains
 
-import android.Manifest.permission.ACCESS_COARSE_LOCATION
+import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
@@ -131,15 +131,15 @@ class MainActivity : AppCompatActivity() {
      * Return the current state of the permissions needed.
      */
     private fun checkPermissions() =
-            ActivityCompat.checkSelfPermission(this, ACCESS_COARSE_LOCATION) == PERMISSION_GRANTED
+            ActivityCompat.checkSelfPermission(this, ACCESS_FINE_LOCATION) == PERMISSION_GRANTED
 
     private fun startLocationPermissionRequest() {
-        ActivityCompat.requestPermissions(this, arrayOf(ACCESS_COARSE_LOCATION),
+        ActivityCompat.requestPermissions(this, arrayOf(ACCESS_FINE_LOCATION),
                 REQUEST_PERMISSIONS_REQUEST_CODE)
     }
 
     private fun requestPermissions() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this, ACCESS_COARSE_LOCATION)) {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, ACCESS_FINE_LOCATION)) {
             // Provide an additional rationale to the user. This would happen if the user denied the
             // request previously, but didn't check the "Don't ask again" checkbox.
             Log.i(TAG, "Displaying permission rationale to provide additional context.")
