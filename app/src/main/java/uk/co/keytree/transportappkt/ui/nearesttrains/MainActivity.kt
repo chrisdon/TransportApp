@@ -25,22 +25,23 @@ import uk.co.keytree.transportappkt.BuildConfig.APPLICATION_ID
 import uk.co.keytree.transportappkt.R
 import uk.co.keytree.transportappkt.databinding.ActivityMainBinding
 import uk.co.keytree.transportappkt.injection.ViewModelFactory
-import uk.co.keytree.transportappkt.model.Station
+import uk.co.keytree.transportappkt.model.Member
 
 class MainActivity : AppCompatActivity() {
 
     private val TAG = "MainActivity"
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 29
+    private val TYPE_TRAIN_STATION = "train_station"
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
             R.id.navigation_home -> {
                 return@OnNavigationItemSelectedListener true
             }
-            R.id.navigation_dashboard -> {
+            R.id.navigation_departures -> {
                 return@OnNavigationItemSelectedListener true
             }
-            R.id.navigation_notifications -> {
+            R.id.navigation_directions -> {
                 return@OnNavigationItemSelectedListener true
             }
         }
@@ -67,7 +68,7 @@ class MainActivity : AppCompatActivity() {
         })
         binding.viewModel = nearestTrainViewModel
         nearestTrainViewModel.tapped.observe(this, Observer {
-            station -> if(station != null) showTapped(station)
+            member -> if(member != null) showTapped(member)
         })
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
@@ -109,13 +110,21 @@ class MainActivity : AppCompatActivity() {
         errorSnackBar?.show()
     }
 
-    private fun showTapped(station: Station){
-        errorSnackBar = Snackbar.make(binding.root, "${station.name} ${station.station_code}", Snackbar.LENGTH_LONG)
+    private fun showTapped(member: Member){
+        errorSnackBar = Snackbar.make(binding.root, makeMessage(member), Snackbar.LENGTH_LONG)
         errorSnackBar?.show()
     }
 
     private fun hideError(){
         errorSnackBar?.dismiss()
+    }
+
+    private fun makeMessage(member: Member) : String {
+        return if(member.type == TYPE_TRAIN_STATION)  {
+            "${member.name} ${member.station_code}"
+        } else {
+            "${member.name} ${member.atcocode}"
+        }
     }
 
     /**

@@ -7,10 +7,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import uk.co.keytree.transportappkt.R
 import uk.co.keytree.transportappkt.databinding.ItemStationBinding
+import uk.co.keytree.transportappkt.model.Member
 import uk.co.keytree.transportappkt.model.Station
 
-class TrainListAdapter(val clickListener: (Station) -> Unit): RecyclerView.Adapter<TrainListAdapter.ViewHolder>() {
-    private lateinit var stationList:List<Station>
+class TrainListAdapter(val clickListener: (Member) -> Unit): RecyclerView.Adapter<TrainListAdapter.ViewHolder>() {
+    private lateinit var stationList:List<Member>
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrainListAdapter.ViewHolder {
@@ -26,16 +27,16 @@ class TrainListAdapter(val clickListener: (Station) -> Unit): RecyclerView.Adapt
         return if(::stationList.isInitialized) stationList.size else 0
     }
 
-    fun updatePostList(stationList:List<Station>){
+    fun updatePostList(stationList:List<Member>){
         this.stationList = stationList
         notifyDataSetChanged()
     }
 
     class ViewHolder(private val binding: ItemStationBinding):RecyclerView.ViewHolder(binding.root){
         private val viewModel = NearestTrainViewModel()
-        fun bind(station:Station, clickListener: (Station) -> Unit){
-            viewModel.bind(station)
-            binding.root.setOnClickListener{clickListener(station)}
+        fun bind(member:Member, clickListener: (Member) -> Unit){
+            viewModel.bind(member)
+            binding.root.setOnClickListener{clickListener(member)}
             binding.viewModel = viewModel
         }
     }

@@ -8,6 +8,7 @@ import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import uk.co.keytree.transportappkt.R
 import uk.co.keytree.transportappkt.base.BaseViewModel
+import uk.co.keytree.transportappkt.model.Member
 import uk.co.keytree.transportappkt.model.Station
 import uk.co.keytree.transportappkt.network.TransportApi
 import uk.co.keytree.transportappkt.utils.TA_APP_ID
@@ -26,9 +27,9 @@ class NearestTrainsListViewModel: BaseViewModel() {
 
     val loadingVisibility: MutableLiveData<Int> = MutableLiveData()
     val errorMessage: MutableLiveData<Int> = MutableLiveData()
-    val tapped: MutableLiveData<Station> = MutableLiveData()
+    val tapped: MutableLiveData<Member> = MutableLiveData()
     val errorClickListener = View.OnClickListener { loadNearestStations(latitude, longitude) }
-    val stationListAdapter: TrainListAdapter = TrainListAdapter{station: Station -> onStationTapped(station)}
+    val stationListAdapter: TrainListAdapter = TrainListAdapter{member: Member -> onMemberTapped(member)}
 
     override fun onCleared() {
         super.onCleared()
@@ -42,13 +43,13 @@ class NearestTrainsListViewModel: BaseViewModel() {
     fun loadNearestStations(latitiude: Double, longitude: Double) {
         this.latitude = latitiude
         this.longitude = longitude
-        subscription = transportApi.getNearestStations(TA_APP_ID, TA_APP_KEY, latitiude, longitude)
+        subscription = transportApi.getPlaces(TA_APP_ID, TA_APP_KEY, latitiude, longitude)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { onRetrieveStationListStart() }
                 .doOnTerminate { onRetrieveStationListFinish() }
                 .subscribe(
-                        { result -> onRetrieveStationListSuccess(result.stations) },
+                        { result -> onRetrieveStationListSuccess(result.member) },
                         { error -> onRetrieveStationListError(error) }
                 )
     }
@@ -62,8 +63,8 @@ class NearestTrainsListViewModel: BaseViewModel() {
         loadingVisibility.value = View.GONE
     }
 
-    private fun onRetrieveStationListSuccess(stationList:List<Station>){
-        stationListAdapter.updatePostList(stationList)
+    private fun onRetrieveStationListSuccess(members:List<Member>){
+        stationListAdapter.updatePostList(members)
     }
 
     private fun onRetrieveStationListError(error: Throwable){
@@ -71,7 +72,7 @@ class NearestTrainsListViewModel: BaseViewModel() {
         errorMessage.value = R.string.train_error
     }
 
-    private fun onStationTapped(station: Station) {
-        tapped.value = station
+    private fun onMemberTapped(member: Member) {
+        tapped.value = member
     }
 }
