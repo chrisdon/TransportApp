@@ -1,13 +1,13 @@
 package uk.co.keytree.transportappkt.base
 
-import android.arch.lifecycle.ViewModel
+import android.support.v7.app.AppCompatActivity
 import uk.co.keytree.transportappkt.injection.component.DaggerViewModelInjector
 import uk.co.keytree.transportappkt.injection.component.ViewModelInjector
 import uk.co.keytree.transportappkt.injection.module.NetworkModule
-import uk.co.keytree.transportappkt.ui.nearesttrains.NearestTrainsListViewModel
+import uk.co.keytree.transportappkt.ui.nearesttrains.MainActivity
 
-abstract class BaseViewModel : ViewModel() {
-    /*private val injector: ViewModelInjector = DaggerViewModelInjector
+abstract class BaseActivity: AppCompatActivity() {
+    private val injector: ViewModelInjector = DaggerViewModelInjector
             .builder()
             .networkModule(NetworkModule)
             .build()
@@ -21,7 +21,7 @@ abstract class BaseViewModel : ViewModel() {
      */
     private fun inject() {
         when (this) {
-            is NearestTrainsListViewModel -> injector.inject(this)
+            is MainActivity -> injector.inject(this)
         }
-    }*/
+    }
 }

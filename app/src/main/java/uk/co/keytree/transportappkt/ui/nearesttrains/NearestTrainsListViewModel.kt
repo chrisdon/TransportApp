@@ -17,9 +17,9 @@ import uk.co.keytree.transportappkt.utils.TEST_LAT
 import uk.co.keytree.transportappkt.utils.TEST_LON
 import javax.inject.Inject
 
-class NearestTrainsListViewModel: BaseViewModel() {
-    @Inject
-    lateinit var transportApi: TransportApi
+class NearestTrainsListViewModel(private val transportApi: TransportApi): BaseViewModel() {
+    //@Inject
+    //lateinit var transportApi: TransportApi
 
     private lateinit var subscription: Disposable
     private var latitude: Double = 0.0

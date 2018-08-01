@@ -2,6 +2,7 @@ package uk.co.keytree.transportappkt.injection.component
 
 import dagger.Component
 import uk.co.keytree.transportappkt.injection.module.NetworkModule
+import uk.co.keytree.transportappkt.ui.nearesttrains.MainActivity
 import uk.co.keytree.transportappkt.ui.nearesttrains.NearestTrainsListViewModel
 import javax.inject.Singleton
 
@@ -10,9 +11,9 @@ import javax.inject.Singleton
 interface ViewModelInjector {
     /**
      * Injects required dependencies into the specified NearestTrainsViewModel.
-     * @param nearestTrainsViewModel NearestTrainsViewModel in which to inject the dependencies
+     * @param mainActivity: MainActivity in which to inject the dependencies
      */
-    fun inject(nearestTrainsViewModel: NearestTrainsListViewModel)
+    fun inject(mainActivity: MainActivity)
 
     @Component.Builder
     interface Builder {

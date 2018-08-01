@@ -15,7 +15,6 @@ import android.support.design.widget.Snackbar
 import android.support.design.widget.Snackbar.LENGTH_INDEFINITE
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.PermissionChecker.PERMISSION_GRANTED
-import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
@@ -23,11 +22,15 @@ import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
 import uk.co.keytree.transportappkt.BuildConfig.APPLICATION_ID
 import uk.co.keytree.transportappkt.R
+import uk.co.keytree.transportappkt.base.BaseActivity
 import uk.co.keytree.transportappkt.databinding.ActivityMainBinding
+import uk.co.keytree.transportappkt.injection.NearestTrainsListViewModelFactory
 import uk.co.keytree.transportappkt.injection.ViewModelFactory
 import uk.co.keytree.transportappkt.model.Member
+import uk.co.keytree.transportappkt.network.TransportApi
+import javax.inject.Inject
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : BaseActivity() {
 
     private val TAG = "MainActivity"
     private val REQUEST_PERMISSIONS_REQUEST_CODE = 29
@@ -52,6 +55,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var nearestTrainViewModel: NearestTrainsListViewModel
     private lateinit var locationViewModel: LocationViewModel
 
+    @Inject
+    lateinit var transportApi: TransportApi
+
     private var errorSnackBar: Snackbar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,7 +66,7 @@ class MainActivity : AppCompatActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
         binding.trainsList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
-        nearestTrainViewModel = ViewModelProviders.of(this).get(NearestTrainsListViewModel::class.java)
+        nearestTrainViewModel = ViewModelProviders.of(this, NearestTrainsListViewModelFactory(transportApi)).get(NearestTrainsListViewModel::class.java)
         val decoration = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
         binding.trainsList.addItemDecoration(decoration)
         nearestTrainViewModel.errorMessage.observe(this, Observer {
