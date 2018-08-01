@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.databinding.DataBindingUtil
+import android.location.Location
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
@@ -59,6 +60,17 @@ class MainActivity : BaseActivity() {
     lateinit var transportApi: TransportApi
 
     private var errorSnackBar: Snackbar? = null
+    private val errorMessageObserver = Observer<Int> {
+        errorMessage -> if(errorMessage != null) showError(errorMessage) else hideError()
+    }
+    private val tappedObserver = Observer<Member> {
+        member -> if(member != null) showTapped(member)
+    }
+    private val locationResultObserver = Observer<Location> {
+        locationResult -> if(locationResult != null) {
+            nearestTrainViewModel.loadNearestStations(locationResult.latitude, locationResult.longitude)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,25 +81,15 @@ class MainActivity : BaseActivity() {
         nearestTrainViewModel = ViewModelProviders.of(this, NearestTrainsListViewModelFactory(transportApi)).get(NearestTrainsListViewModel::class.java)
         val decoration = DividerItemDecoration(this, DividerItemDecoration.VERTICAL)
         binding.trainsList.addItemDecoration(decoration)
-        nearestTrainViewModel.errorMessage.observe(this, Observer {
-            errorMessage -> if(errorMessage != null) showError(errorMessage) else hideError()
-        })
+        nearestTrainViewModel.errorMessage.observe(this, errorMessageObserver)
         binding.viewModel = nearestTrainViewModel
-        nearestTrainViewModel.tapped.observe(this, Observer {
-            member -> if(member != null) showTapped(member)
-        })
+        nearestTrainViewModel.tapped.observe(this, tappedObserver)
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
 
         locationViewModel = ViewModelProviders.of(this, ViewModelFactory(this)).get(LocationViewModel::class.java)
-        locationViewModel.errorMessage.observe(this, Observer {
-            errorMessage -> if(errorMessage != null) showError(errorMessage) else hideError()
-        })
-        locationViewModel.locationResult.observe(this, Observer {
-            locationResult -> if(locationResult != null) {
-                nearestTrainViewModel.loadNearestStations(locationResult.latitude, locationResult.longitude)
-            }
-        })
+        locationViewModel.errorMessage.observe(this, errorMessageObserver)
+        locationViewModel.locationResult.observe(this, locationResultObserver)
 
         binding.swipeContainer.setOnRefreshListener{
             binding.swipeContainer.setRefreshing(false)
@@ -100,6 +102,14 @@ class MainActivity : BaseActivity() {
         super.onStart()
 
         getLocation()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        nearestTrainViewModel.errorMessage.removeObserver(errorMessageObserver)
+        nearestTrainViewModel.tapped.removeObserver(tappedObserver)
+        locationViewModel.errorMessage.removeObserver(errorMessageObserver)
+        locationViewModel.locationResult.removeObserver(locationResultObserver)
     }
 
     private fun getLocation() {

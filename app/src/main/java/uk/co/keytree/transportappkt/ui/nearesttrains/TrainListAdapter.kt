@@ -1,6 +1,5 @@
 package uk.co.keytree.transportappkt.ui.nearesttrains
 
-import android.arch.lifecycle.MutableLiveData
 import android.databinding.DataBindingUtil
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -8,10 +7,9 @@ import android.view.ViewGroup
 import uk.co.keytree.transportappkt.R
 import uk.co.keytree.transportappkt.databinding.ItemStationBinding
 import uk.co.keytree.transportappkt.model.Member
-import uk.co.keytree.transportappkt.model.Station
 
 class TrainListAdapter(val clickListener: (Member) -> Unit): RecyclerView.Adapter<TrainListAdapter.ViewHolder>() {
-    private lateinit var stationList:List<Member>
+    var stationList:List<Member> = emptyList()
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrainListAdapter.ViewHolder {
@@ -24,7 +22,7 @@ class TrainListAdapter(val clickListener: (Member) -> Unit): RecyclerView.Adapte
     }
 
     override fun getItemCount(): Int {
-        return if(::stationList.isInitialized) stationList.size else 0
+        return stationList.size
     }
 
     fun updatePostList(stationList:List<Member>){

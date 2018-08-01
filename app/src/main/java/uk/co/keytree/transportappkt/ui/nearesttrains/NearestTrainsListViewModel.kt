@@ -3,21 +3,17 @@ package uk.co.keytree.transportappkt.ui.nearesttrains
 import android.arch.lifecycle.MutableLiveData
 import android.util.Log
 import android.view.View
-import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.Observable
 import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import uk.co.keytree.transportappkt.R
 import uk.co.keytree.transportappkt.base.BaseViewModel
 import uk.co.keytree.transportappkt.model.Member
-import uk.co.keytree.transportappkt.model.Station
-import uk.co.keytree.transportappkt.network.TransportApi
+import uk.co.keytree.transportappkt.model.PlacesResponse
+import uk.co.keytree.transportappkt.repository.ITransportApiRepository
 import uk.co.keytree.transportappkt.utils.TA_APP_ID
 import uk.co.keytree.transportappkt.utils.TA_APP_KEY
-import uk.co.keytree.transportappkt.utils.TEST_LAT
-import uk.co.keytree.transportappkt.utils.TEST_LON
-import javax.inject.Inject
 
-class NearestTrainsListViewModel(private val transportApi: TransportApi): BaseViewModel() {
+class NearestTrainsListViewModel(private val transportApiRepository: ITransportApiRepository): BaseViewModel() {
     //@Inject
     //lateinit var transportApi: TransportApi
 
@@ -40,12 +36,14 @@ class NearestTrainsListViewModel(private val transportApi: TransportApi): BaseVi
         //loadNearestStations()
     }
 
-    fun loadNearestStations(latitiude: Double, longitude: Double) {
-        this.latitude = latitiude
+    fun makeCall(latitude: Double, longitude: Double) : Observable<PlacesResponse> {
+        return transportApiRepository.loadPlaces(TA_APP_ID, TA_APP_KEY, latitude, longitude)
+    }
+
+    fun loadNearestStations(latitude: Double, longitude: Double) {
+        this.latitude = latitude
         this.longitude = longitude
-        subscription = transportApi.getPlaces(TA_APP_ID, TA_APP_KEY, latitiude, longitude)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+        subscription = makeCall(latitude, longitude)
                 .doOnSubscribe { onRetrieveStationListStart() }
                 .doOnTerminate { onRetrieveStationListFinish() }
                 .subscribe(
@@ -68,8 +66,9 @@ class NearestTrainsListViewModel(private val transportApi: TransportApi): BaseVi
     }
 
     private fun onRetrieveStationListError(error: Throwable){
-        Log.e("NearestTrainsViewModel", error.localizedMessage, error);
+        Log.e("NearestTrainsViewModel", error.localizedMessage, error)
         errorMessage.value = R.string.train_error
+        loadingVisibility.value = View.GONE
     }
 
     private fun onMemberTapped(member: Member) {
