@@ -13,12 +13,14 @@ import org.junit.rules.TestRule
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
+import uk.co.keytree.transportappkt.R
 import uk.co.keytree.transportappkt.model.PlacesResponse
 import uk.co.keytree.transportappkt.network.TransportApi
 import uk.co.keytree.transportappkt.repository.ITransportApiRepository
 import uk.co.keytree.transportappkt.util.ModelUtils
 import uk.co.keytree.transportappkt.utils.TA_APP_ID
 import uk.co.keytree.transportappkt.utils.TA_APP_KEY
+import java.lang.Exception
 
 class NearestTrainsListViewModelTest {
     @Mock
@@ -57,15 +59,14 @@ class NearestTrainsListViewModelTest {
     }
 
     @Test
-    fun loadNearestStationsLoadingVisibility() {
-        val placesResponse = ModelUtils().getPlacesResponse()
+    fun loadNearestStationsError() {
 
         Mockito.`when`(transportApiRepository.loadPlaces(TA_APP_ID, TA_APP_KEY, ModelUtils().LATITUDE, ModelUtils().LONGITUDE))
-                .thenReturn(Observable.just(placesResponse))
+                .thenReturn(Observable.error(Exception()))
 
         viewModel.loadNearestStations(ModelUtils().LATITUDE, ModelUtils().LONGITUDE)
 
-        assertEquals(View.VISIBLE, viewModel.loadingVisibility.value)
+        assertEquals(R.string.train_error, viewModel.errorMessage.value)
     }
 
 
