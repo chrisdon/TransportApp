@@ -3,17 +3,18 @@ package uk.co.keytree.transportappkt.ui.nearesttrains
 import android.arch.lifecycle.MutableLiveData
 import android.util.Log
 import android.view.View
-import io.reactivex.Observable
+import io.reactivex.Scheduler
 import io.reactivex.disposables.Disposable
 import uk.co.keytree.transportappkt.R
 import uk.co.keytree.transportappkt.base.BaseViewModel
 import uk.co.keytree.transportappkt.model.Member
-import uk.co.keytree.transportappkt.model.PlacesResponse
 import uk.co.keytree.transportappkt.repository.ITransportApiRepository
 import uk.co.keytree.transportappkt.utils.TA_APP_ID
 import uk.co.keytree.transportappkt.utils.TA_APP_KEY
 
-class NearestTrainsListViewModel(private val transportApiRepository: ITransportApiRepository): BaseViewModel() {
+class NearestTrainsListViewModel(private val transportApiRepository: ITransportApiRepository,
+                                 private val subscribeScheduler: Scheduler,
+                                 private val observeScheduler: Scheduler): BaseViewModel() {
     //@Inject
     //lateinit var transportApi: TransportApi
 
@@ -36,14 +37,12 @@ class NearestTrainsListViewModel(private val transportApiRepository: ITransportA
         //loadNearestStations()
     }
 
-    fun makeCall(latitude: Double, longitude: Double) : Observable<PlacesResponse> {
-        return transportApiRepository.loadPlaces(TA_APP_ID, TA_APP_KEY, latitude, longitude)
-    }
-
     fun loadNearestStations(latitude: Double, longitude: Double) {
         this.latitude = latitude
         this.longitude = longitude
-        subscription = makeCall(latitude, longitude)
+        subscription = transportApiRepository.loadPlaces(TA_APP_ID, TA_APP_KEY, latitude, longitude)
+                .subscribeOn(subscribeScheduler)
+                .observeOn(observeScheduler)
                 .doOnSubscribe { onRetrieveStationListStart() }
                 .doOnTerminate { onRetrieveStationListFinish() }
                 .subscribe(
@@ -71,7 +70,7 @@ class NearestTrainsListViewModel(private val transportApiRepository: ITransportA
         loadingVisibility.value = View.GONE
     }
 
-    private fun onMemberTapped(member: Member) {
+    fun onMemberTapped(member: Member) {
         tapped.value = member
     }
 }
